@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="minimum-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <title>WebSocket</title>
+    <link rel="stylesheet" href="/views/index.css" />
+  </head>
+
+  <body>
+
+      <span class="list"><a class="header-button" href="http://127.0.0.1:8125/login" id = "welcome"></a></span><br>
+      <span class="list"><a class="header-button" href="http://127.0.0.1:8125/logout" id = "logout">Войти</a></span>
+
+    <header>
+
+      <h1>Мой Чат      
+      </h1>
+      <span id="status">Не в сети</span>
+    </header>
+
+    <main>
+      <ul id="messages"></ul>
+
+      <form id="form">
+        <label for="message">&gt;</label>
+        <input type="text" id="input" required autofocus autocomplete="off" />
+        <!-- <label for="message">&gt;</label> -->
+      </form>
+
+    </main>
+    <!-- <div class="form">
+      <input type="text" name="filter" placeholder="Поиск по ФИО" required id="filter" maxlength="200">
+  </div> -->
+    <!-- <p id = "users"></p> -->
+   
+
+  <div class="korpus">
+    <br>
+      <a onclick="vkladki('Users',this);" class="myInput" href="javascript:void(0);" id="vkladka1">Пользователи</a>
+      <a onclick="vkladki('History',this);" href="javascript:void(0);">История</a>
+      <!-- <a onclick="vkladki('script',this);" href="javascript:void(0);">скрипт</a> -->
+      <div id="Users" class="vid">
+          <form action="">
+              <div class="flex">
+      <input type="text" id="myInput" onkeydown="return myFilter(event)" placeholder="Поиск по ФИО.." >
+      <input type="text" class="myInput"   id="addChat" required placeholder="Имя чата">
+      <button id = "btnAdd" class="myInput" style="background-image: url('/img/removable_small.png');" runat="server" onclick="myAddChat()">Сохранить пользователей в чате</button>
+     
+    </div>
+    </form>
+    <table id="tableUsers"></table>
+      </div>
+      <div id="History" class="skryt">
+          <input type="text" id="myInputHis" onkeyup="myFilterHis()" placeholder="Поиск">
+          <ul id="messagesHistory"></ul>
+          <table id="tableMessages"></table>
+      </div>
+      <div id="script" class="skryt">3</div>
+      </div>
+          <script src="/lib/app.js"></script>
+          <script src="/lib/appClass.js"></script>
+  </body>
+</html>

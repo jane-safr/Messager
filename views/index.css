@@ -1,0 +1,107 @@
+body {
+  /* background-color: rgba(248, 238, 245, 0.767); */
+  /* color: rgb(6, 59, 6); */
+  font-family: 'Consolas', monospace;
+}
+
+header {
+  text-align: center;
+}
+.header-button {
+  text-align: right;
+   /* color: rgb(6, 71, 6);; */
+  /* text-transform: uppercase; */
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-decoration: none;
+  /* padding: 24px 25px; */
+  font-size: 0.9em;
+  /* background: #669bce; */
+ position: relative;  
+ top: 0; left: 75%; right: 0; bottom: 0;
+  /* list-style-type: none; */
+ 
+}
+  .header-button:hover,.fheader-button:active,.header-button:focus {
+    background:   rgb(228, 230, 227);
+  }
+
+ .flex {
+  display: flex;
+}
+   
+#messages, #messagesHistory {
+  margin-left: 1em;
+  list-style: none;
+}
+
+#form {
+  display: flex;
+}
+#myInput, #myInputHis {
+
+  background-image: url('/img/searchicon.png'); /* Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 80%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 12px 20px 12px 40px; /* Add some padding */
+  border: 1px solid rgb(252, 248, 248); /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+  /* margin-left: 37px; */
+  /* margin-right: 370px; */
+
+}
+.myInput {
+
+  
+  background-color: #ffffff;
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  /*width: 80%;  Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 12px 20px 12px 40px; /* Add some padding */
+  border: 1px solid rgb(252, 248, 248); /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+  /* margin-left: 37px; */
+  /* margin-right: 370px; */
+
+}
+input, label {
+  display: block;
+}
+
+input {
+  outline: none;
+  border: 1px solid green;
+  width: 130px; 
+  /* background-color: rgb(228, 230, 227); */
+  /* color: rgb(6, 71, 6); */
+  padding: 1em .5em;
+  display: block;
+  font-size: 0.9em;
+  font-family: 'Consolas', monospace;
+  flex: 1;
+}
+
+
+output {
+  outline: none;
+   display: block;
+  font-size: 0.9em;
+  font-family: 'Consolas', monospace;
+  flex: 1;
+}
+label {
+  display: block;
+  padding: 1em .5em;
+  font-size: 1.5em;
+}
+
+.selected{background-color: rgb(19, 153, 19); color: rgb(252, 252, 252);font-weight: bold}
+.id{display: none;}
+.right{ text-align: right;color: rgb(150, 114, 73)}
+
+.korpus .vid { display: block; }
+.korpus .skryt { display: none; }

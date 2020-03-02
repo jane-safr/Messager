@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <!-- <script src="https://smtpjs.com/v3/smtp.js"></script> -->
+ </head>
+<style>
+ 
+
+</style>
+<!-- <link rel="stylesheet" href="./login.css" /> -->
+<link rel="stylesheet" type="text/css" href="./login.css" />
+<body>
+ 
+<header>
+    <div class="header">
+    </div>
+</header>
+ 
+<div class="login-page">
+  <div class="form">
+      <form class="vid" class="login-form"  method="post" action="/login" id = "formlogin">
+
+          <input type="text" name="email" placeholder="email" required id="id_email" maxlength="200"
+
+          >
+          <input type="password" name="password" placeholder="пароль" required
+
+          >
+         <button type="submit" >войти</button>
+        <p class="message" onclick="VisibleForm('formregister','');">Не зарегистрированны? <a href="#register-form" id ="aregisterloginform" >Создать аккаунт.</a></p>
+        <!-- <p class="message" onclick="VisibleForm('formreset','');">Забыли пароль? <a href="#reset-form" id ="arestoreloginform">Востановить.</a></p> -->
+        <p class="message" onclick="VisibleForm('formchange','');">Изменить пароль? <a href="#change-form" id ="achangeloginform">Изменить.</a></p>
+      </form>
+        <form class="skryt" class = "register-form"  method = "post" action="/register" id = "formregister">
+        <input type = "text" name="username" placeholder="имя пользователя" required maxlength="255"
+        <% if(notUser) { %>
+          value = <%= notUser.username %> 
+          <% } %>
+        />
+        <input type="text" name="email" placeholder="email" required  maxlength="200" 
+        <% if(notUser) { %>
+          value = <%= notUser.email %> 
+          <% } %>
+        />
+        <input type="password" name="password1" placeholder="пароль" required
+        <% if(notUser) { %>
+          value = <%= notUser.password1 %> 
+          <% } %>
+        />
+        <input type="password" name="password2" placeholder="повторите пароль" required
+        <% if(notUser) { %>
+          value = <%= notUser.password2 %> 
+          <% } %>
+        />
+        <button type="submit">создать</button>
+        <p class="message"  onclick="VisibleForm('formlogin','');">Уже зарегистрированны? <a href="#login-form" id = "aregisterform">Войти</a></p>
+        <!-- <p class="message" onclick="VisibleForm('formreset','');">Забыли пароль? <a href="#reset-form" id = "aresetform" >Восстановить.</a></p> -->
+        <p class="message" onclick="VisibleForm('formchange','');">Изменить пароль? <a href="#change-form" id ="achangeloginform">Изменить.</a></p>
+      </form>
+      <!-- <form class="skryt" class="reset-form" method="post" action="{% url 'reset' %}" id = "formreset">
+          <input type="text" name="email" placeholder="email" required  maxlength="200" />
+          <button type="submit">Восстановить</button>
+          <p class="message"  onclick="VisibleForm('formregister','');">Не зарегистрированны? <a href="#register-form">Создать аккаунт.</a></p>
+          <p class="message" onclick="VisibleForm('formlogin','');">Уже зарегистрированны? <a href="#login-form" >Войти.</a></p>
+          <p class="message" onclick="VisibleForm('formchange','');">Изменить пароль? <a href="#change-form" id ="achangeloginform">Изменить.</a></p>
+      </form> -->
+      <form class="skryt" class="change-form" method="post" action="/change" id = "formchange">
+        <input type="text" name="email" placeholder="email" required id="id_email" maxlength="200"
+        <% if(user) { %>
+          value = <%= user.email %> 
+          <% }  %>
+          <% if(notUser) { %>
+            value = <%= notUser.email %> 
+            <% } %>
+        />
+        <input type="password" name="password" placeholder="старый пароль" required
+        <% if(user) { %>
+          value = <%= user.password %> 
+          <% } %>
+          <% if(notUser) { %>
+            value = <%= notUser.password %> 
+            <% } %>
+        />
+        <input type="password" name="password1" placeholder="пароль" required
+        <% if(notUser) { %>
+          value = <%= notUser.password1 %> 
+          <% } %>
+      />
+        <input type="password" name="password2" placeholder="повторите пароль" required
+        <% if(notUser) { %>
+          value = <%= notUser.password2 %> 
+          <% } %>
+      />
+        <button type="submit">Изменить</button>
+        <p class="message"  onclick="VisibleForm('formregister','');">Не зарегистрированны? <a href="#register-form">Создать аккаунт.</a></p>
+        <p class="message" onclick="VisibleForm('formlogin','');">Уже зарегистрированны? <a href="#login-form" >Войти.</a></p>
+    </form>
+    <!-- <form method="post">
+        <button type="button" value="Send Email" onclick="sendEmail()"/>
+      </form>  -->
+    <% if(message.length > 0) { %>
+      <div class="messageAt" id = 'message'><%= message %></div> 
+     <% } %>
+     <% if(SelForm.length > 0) { %>
+      <div class="skryt" id = 'SelForm'><%= SelForm %></div> 
+     <% } %>
+  </div>
+</div>
+ 
+</body>
+ 
+    <script>
+
+
+var frm = "formlogin";
+
+var x = document.getElementById('SelForm').innerHTML;
+
+frm = "formlogin";
+VisibleForm(x,document.getElementById('message').innerHTML);
+
+
+function VisibleForm(x,msg) {
+ var mostrar = document.getElementById(x);
+var actual = document.getElementById(frm);
+actual.className="skryt";
+mostrar.className="vid";
+document.getElementById('message').innerHTML = msg;
+frm = x;
+} 
+
+
+
+    </script>
+    </script>
+</html>
