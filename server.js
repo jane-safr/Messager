@@ -1,4 +1,4 @@
-const port = 7000;
+const port = process.env.port || 7000;
 const HOST = 'localhost';
 const WebSocket = require("ws");
 let fs = require('fs');

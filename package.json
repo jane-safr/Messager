@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "ejs": "^3.0.1",
+    "node-pre-gyp": "^0.14.0",
     "sqlite3": "^4.1.1",
     "ws": "^7.2.1"
   },
