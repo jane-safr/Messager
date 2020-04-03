@@ -9,7 +9,14 @@ exports.session = function( request, response, callback ){
     // проверяем текущий запрос и определяем, есть ли для него сеанс
     // сеансы определяются путем поиска request.headers ["Set-Cookie"] по хешу наших сеансов
    session = sessions.lookupOrCreate(request,{
-     lifetime:604800
+     lifetime:604800,
+     ldap: {
+      url: 'ldap://ad1.titan2.ru',
+      dn: 'T2\\1c-ad',
+      passwd: 'Qwerty1234',
+      suffix: 'DC=titan2,DC=ru'
+    }
+
     //  ,
     //  sessionID: 'u1mNwZEpCLc'
    });
@@ -42,20 +49,20 @@ exports.session = function( request, response, callback ){
   
       // Create a new instance of a node HttpServer
       var orig = new http.Server(function(request, response){
-
         request.logIn = function(user){
 
          // console.log('core_user',user,request.session.data.user);
-           if(request.session.data.user !=JSON.stringify(user))
+           if(user && request.session.data.user !=JSON.stringify(user))
            { 
             
-             console.log('Пользователь добавлен в сессию ', request.session.id);
+             console.log('Пользователь добавлен в сессию ',JSON.stringify(user), request.session.id);
              request.session.data.user = JSON.stringify(user);
            }
            };
         request.logout = function()    {
           console.log("Пользователь удален из сессии",request.session.data.user,request.session.id);
-          request.session.data.user = null;
+         request.session.data.user = null;
+         //request.session = null;
         }
   
         exports.session(request, response, function(request, response){
@@ -68,7 +75,8 @@ exports.session = function( request, response, callback ){
       let server = Object.create(orig);
  
       server.listen = function (port,cb) { 
-        orig.listen(Number(port));
+        //orig.listen(Number(port));
+        orig.listen(process.env.PORT || Number(port));
         cb();
       };
   

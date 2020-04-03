@@ -1,75 +1,92 @@
-const port = process.env.port || 7000;
+//let http = require('http')
+
 const HOST = 'localhost';
 const WebSocket = require("ws");
 let fs = require('fs');
- let path = require('path');
- let app = require('./lib/myExpress');
+let path = require('path');
+let app = require('./lib/myExpress');
 let ejs = require('ejs');
 let serverDB = require("./lib/serverDB");
 let serverClass = require("./lib/serverClass");
 let  session = require('./sessions/core').magicSession();
 
-
-
+const mode = 'AD';
 let mySession;
 let _user;
 let usersOnline=[];
-
+let porthttp = process.env.port || 8125
+const serverHttp = require("http").createServer(onRequest);
 const handleGreetRequest = (request, response) => {
+  console.log('Start ',request.url);
+  //if (/Messager/server.js/)
   //сессия
   mySession = request.session;
+  if(mySession)
+{
+  //console.log('mySession',mySession);
   serverDB.loginFromSession(mySession.id,function(err, all) {
-    if (err) {
-     console.log("err loginFromSession",err);
-     cb(err,null);
+  if (err) {
+    console.log("err loginFromSession",err);
+    cb(err,null);
+  }
+  if(all)
+  {    _user =
+    {
+      id:     all.id,
+      email:  all.email,
+      login:  all.login,
+      fio:   all.fio
+      };
+     if(mySession) {console.log(Date(),"Сессия найдена",_user.fio,mySession.id,mySession.id);}
+      
     }
-    if(all)
-    {    _user =
-      {
-        id:     all.id,
-        email:  all.email,
-        login:  all.login,
-        fio:   all.fio
-        };
-        if(mySession) {console.log("Сессия найдена",_user.fio,mySession.id);}
-      }
-      else 
-      {
-        console.log("Сессия не найдена",_user);
-       if(mySession) {console.log("Сессия не найдена",mySession.id);}
+    else 
+    {
+      console.log("Сессия не найдена",_user);
+      if(mySession) {console.log(Date(),"Сессия не найдена",mySession.id);}
       _user = null;
-      }
-    })
-    request.logIn(_user);
+    }
+  })
+  console.log('_user',_user)
+  request.logIn(_user);}
 
 
   //разборка/определение url
 
 let filePath = '.' + request.url;
  let extname = String(path.extname(request.url)).toLowerCase();
- console.log('filePath',filePath);
+ //console.log('filePath //разборка/определение url',filePath,request.url);
 
  //выход
  if(filePath.includes('logout')) 
- { mySession = null; 
-   request.logout();
+ { 
+   
+  console.log('logout');
+     request.logout();
    if(_user)
       {          serverClass.login(function(err,user){
               if (err) {
                 console.log(err);
                 return;
               }
-            },_user.email,null,null)}
+              console.log('logout',_user);
+            },_user,null,mode)}
+            mySession = null; 
   console.log('logout', request.session.data.user,_user);
    }
+   console.log('filePath before dispatch ',filePath,request.url);
+
   filePath = app.dispatch(request.url,extname);
+  console.log(Date(),'filePath',filePath,request.url);
 
 
-if(request.session.data.user)
+if( request.session && request.session.data.user)
 {
      _user = JSON.parse(request.session.data.user);
-    // console.log('request.session.data.user',request.session.data.user,'_user' ,_user );
+   // console.log('request.session.data.user',request.session.data.user,'_user' ,_user );
   }
+ 
+
  
    extname = String(path.extname(filePath)).toLowerCase();
    //console.log( 'extname', extname);
@@ -77,8 +94,10 @@ if(request.session.data.user)
 
 //POST login
     if (request.method === 'POST') {
-     if(request.url == "/login")
+      console.log('POST',request.url)
+     if(request.url.includes("/login") )
         { 
+
           app.postForm(request, function(err,body){
               if(err){console.log(err);return;}
               serverClass.login(function(err,user){
@@ -86,8 +105,9 @@ if(request.session.data.user)
                   console.log(err);
                   return;
                 }
+                console.log('POST2',err,user)
                 if (!user) {
-                  content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: "Укажите правильный email или пароль!", SelForm: 'formlogin', notUser: undefined});
+                  content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: "Укажите правильный " + (mode=="AD"?"логин":"email") + " или пароль!", SelForm: 'formlogin', notUser: undefined,mode: mode});
                   app.Render(response,content,contentType);
 
                   return;
@@ -98,11 +118,14 @@ if(request.session.data.user)
                 
                 console.log('login', mySession.data.user, mySession.id);
 
-                if(usersOnline.findIndex(x => x.id==user.id) ===-1)
+                // commands['usersOnline'](function( _usersOnline){usersOnline =_usersOnline;},usersOnline,server.clients)
+                // console.log('пользователи онлайн login',usersOnline);
+               // if(user)
+                {if(usersOnline.findIndex(x => x && x.id==user.id) ===-1)
                 {usersOnline.push(JSON.parse(user));}
                 console.log('usersOnlinePush',usersOnline)
-                response.redirect("/");
-              },body.email,body.password,mySession.id)
+                response.redirect(process.env.port ? "/Messager/server.js": "/");}
+              },body,mySession,mode)
           })
         } else
     if(request.url == "/change")
@@ -119,14 +142,14 @@ if(request.session.data.user)
           }
 
           if (!user) {
-              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: msg, SelForm: 'formchange', notUser: body});
+              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: msg, SelForm: 'formchange', notUser: body,mode: mode});
             console.log('content',contentType);
             app.Render(response,content,contentType);
               return;
           }
           else
           {
-              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: user, message: msg, SelForm: 'formchange', notUser: undefined});
+              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: user, message: msg, SelForm: 'formchange', notUser: undefined,mode: mode});
             console.log('content',contentType);
             app.Render(response,content,contentType);
 
@@ -149,7 +172,7 @@ if(request.session.data.user)
           }
 
           if (!user) {
-              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: msg, SelForm: 'formregister', notUser: body});
+              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: msg, SelForm: 'formregister', notUser: body,mode: mode});
             console.log('content',contentType);
             app.Render(response,content,contentType);
               return;
@@ -157,7 +180,7 @@ if(request.session.data.user)
           else
           {
             console.log('formregisterRender');
-              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: user, message: msg, SelForm: 'formregister', notUser: body});
+              content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: user, message: msg, SelForm: 'formregister', notUser: body,mode: mode});
             console.log('content',contentType);
             app.Render(response,content,contentType);
 
@@ -169,24 +192,29 @@ if(request.session.data.user)
   }
   else
  { 
+  //console.log('nen',filePath);
    fs.readFile(filePath, function(error, content) {
+   // console.log('nen222');
       if (error) {
+       // console.log('nenerr');
           if(error.code == 'ENOENT') {
               fs.readFile('./404.html', function(error, content) {
                   response.writeHead(404, { 'Content-Type': 'text/html' });
                   response.end(content, 'utf-8');
               });
           }
-          else {
+          else
+           {
               response.writeHead(500);
               response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
           }
       }
       else 
       {
+        //console.log('nen0');
                   if(filePath.includes('ejs'))
             {   
-                content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: ' ' , SelForm: 'formlogin', notUser: undefined});
+                content = ejs.render(fs.readFileSync(filePath, 'utf8'), {filename: 'login',  user: undefined, message: ' ' , SelForm: 'formlogin', notUser: undefined,mode: mode});
             }
             app.Render(response,content,contentType);
 
@@ -194,7 +222,8 @@ if(request.session.data.user)
   });
 }
 }
-const onRequest = (req, res) => {
+function onRequest(req, res)  {
+
   if (req.url.startsWith('/') || req.url.startsWith('/login') ) {
     res.redirect = function(location)
         {   
@@ -203,23 +232,23 @@ const onRequest = (req, res) => {
         }
         if(!req.cookies)
         {req.cookies = [];}
+        
     handleGreetRequest(req, res);
   } else {
     res.statusCode = 404;
     res.end('Страница не найдена.');
   }
 };
+
 ///WebSocket
 
-let cookie_date = new Date().toGMTString(); 
+//let cookie_date = new Date().toGMTString(); 
 const server =  new WebSocket.Server({
-  port,
+  server: serverHttp,
+ // port,
     verifyClient: (info, done) => {
-
     done(mySession);
-
   },
-
   noServer: false
 });
 
@@ -237,11 +266,13 @@ server.on("connection", function(ws, request) {
   commands.getFilterUsers=  serverClass.getFilterUsers;
   //сохранение сообщений
   commands.saveMessage=  serverClass.saveMessage;
+  //пользователи онлайн
+  commands.usersOnline = serverClass.usersOnline;
 
    ws.on("message", message => {
 
      message = JSON.parse(message);
-     console.log('messageServer',message);
+     console.log('messageServer',message, usersOnline,server.clients.size);
      //закрытие сокета с клиента вводом строки exit
      if (message.value === "exit") {
        ws.close();
@@ -258,16 +289,20 @@ server.on("connection", function(ws, request) {
         if(wsSend) 
          {
           console.log('usersOnlineSend',usersOnline)
+
           if (message.act == 'getFilterUsers')
                {
                 wsSend = JSON.parse(wsSend); 
                  wsSend.usersOnline = usersOnline; 
                  wsSend.idChat= _idChat;
+  
                  wsSend = JSON.stringify(wsSend); 
                }
+       //        console.log('wsSend',wsSend)
                ws.send(wsSend);
+        //       console.log('ws.send3')
         }
-      },message, _idChat,ws.user.id);
+      },message, _idChat,ws.user.id,mode);
     } 
     //рассылка сообщений пользователям
     else 
@@ -284,6 +319,7 @@ server.on("connection", function(ws, request) {
                     message
                   })
                 );
+                console.log('ws.send4')
                 }
          }
        });
@@ -309,14 +345,12 @@ server.on("connection", function(ws, request) {
    ///console.log("закрытие сокета!!!!!!!!");
    ws.on("close", function() {
      console.log("закрытие сокета!!!!!!!!!");
-    if(ws.user)
+     if(ws.user)
     {
       try
       {
-        // console.log(  'usersOnlineBefore',usersOnline);
-       usersOnline.splice( usersOnline.findIndex(x => x.id==ws.user.id), 1 );
-      //  console.log(  'usersOnlineAfter',usersOnline);
-      //  console.log('request.logout()')
+        commands['usersOnline'](function( _usersOnline){usersOnline =_usersOnline;},usersOnline,server.clients)
+        console.log('пользователи онлайн splice',usersOnline);
        request.logout();
        mySession = null; 
        ws.user = null;
@@ -327,7 +361,16 @@ server.on("connection", function(ws, request) {
     }
    });
 
-//console.log('if(_user)ws.user =_user',_user, ws.user)
+   ws.on ("error", (error) => {
+            if (error.code != "ECONNRESET") {
+                  throw error;
+             }
+             else{
+              console.log("ECONNRESET" + error);
+             }
+        });
+  
+
   if(_user)ws.user =_user ;
     //пользователь зашел
     if (ws.user)
@@ -336,14 +379,17 @@ server.on("connection", function(ws, request) {
         JSON.stringify({
           cell: "user",
           user: ws.user
+        //   ,
+        //  clients: JSON.stringify(server.clients)
         }));
-        //добавление пользователя в usersOnline, если его там нет
-        if(usersOnline.findIndex(x => x.id==ws.user.id) ===-1)
-        {usersOnline.push(ws.user);
-          console.log('usersOnlinePushWS',usersOnline)}
-    }
+        //пользователи онлайн
+        commands['usersOnline'](function( _usersOnline){usersOnline =_usersOnline;},usersOnline,server.clients)
+        console.log('пользователи онлайн',usersOnline);
+      }
     //заполнение таблицы пользователей
+    //console.log('getFilterUsers1',mode);
     commands['getFilterUsers'](function(err, idChat,wsSend) {
+     // console.log('getFilterUsers2',mode);
       if(err){return;}
         if(idChat)  _idChat = idChat;
         if(wsSend) 
@@ -352,15 +398,15 @@ server.on("connection", function(ws, request) {
                 wsSend.usersOnline = usersOnline; 
                 wsSend.idChat= _idChat;
                 wsSend = JSON.stringify(wsSend); 
+                
               ws.send(wsSend);
+             // console.log('ws.send2',wsSend)
         }
-      },null, _idChat,(ws.user?ws.user.id:0));
+      },null,_idChat?_idChat:0, (ws.user?ws.user.id:0),mode);
 
  });
 
 
-const serverHttp = require("http").createServer(onRequest);
-
-serverHttp.listen(8125, function() {
-  console.log(`Listening on http://${HOST}:8125`);
+serverHttp.listen(porthttp, function() {
+  console.log(`Listening on http://${HOST}:${porthttp}`);
 });

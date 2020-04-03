@@ -13,22 +13,23 @@
   </head>
 
   <body>
+    
+      <span class="list"><a class="header-button" href= window.location.host + window.location.pathname +"/login" id = "welcome"></a></span><br>
+      <span class="list"><a class="header-button" href= window.location.host + window.location.pathname +"/login" id = "logout">Войти</a></span>
+      <div class="korpus">
+      
+      <header>
 
-      <span class="list"><a class="header-button" href="http://127.0.0.1:8125/login" id = "welcome"></a></span><br>
-      <span class="list"><a class="header-button" href="http://127.0.0.1:8125/logout" id = "logout">Войти</a></span>
-
-    <header>
-
-      <h1>Мой Чат      
-      </h1>
-      <span id="status">Не в сети</span>
-    </header>
-
+        <h1> <p class = "vid"> Мой Чат </p></h1> 
+        <span id="status">Не в сети</span>
+      </header>
+   
     <main>
-      <ul id="messages"></ul>
+      
+      <p class = "vid"> <ul id="messages"></ul></p>
 
       <form id="form">
-        <label for="message">&gt;</label>
+        <p class = "vid"> <label for="message">&gt;</label></p>
         <input type="text" id="input" required autofocus autocomplete="off" />
         <!-- <label for="message">&gt;</label> -->
       </form>
@@ -40,30 +41,41 @@
     <!-- <p id = "users"></p> -->
    
 
-  <div class="korpus">
+
     <br>
       <a onclick="vkladki('Users',this);" class="myInput" href="javascript:void(0);" id="vkladka1">Пользователи</a>
       <a onclick="vkladki('History',this);" href="javascript:void(0);">История</a>
+      <a onclick="vkladki('Contacts',this);" href="javascript:void(0);">Контакты</a>
+      
       <!-- <a onclick="vkladki('script',this);" href="javascript:void(0);">скрипт</a> -->
       <div id="Users" class="vid">
           <form action="">
-              <div class="flex">
-      <input type="text" id="myInput" onkeydown="return myFilter(event)" placeholder="Поиск по ФИО.." >
-      <input type="text" class="myInput"   id="addChat" required placeholder="Имя чата">
-      <button id = "btnAdd" class="myInput" style="background-image: url('/img/removable_small.png');" runat="server" onclick="myAddChat()">Сохранить пользователей в чате</button>
-     
-    </div>
-    </form>
-    <table id="tableUsers"></table>
+            <div class="flex">
+              <input type="text" id="myInput" onkeydown="return myFilter(event)" placeholder="Поиск по ФИО (с учетом регистра)" >
+              <input type="text" class="myInput"   id="addChat" required placeholder="Имя чата">
+              <button id = "btnAdd" class="myInput" style="background-image: url('./img/removable_small.png');" runat="server" onclick="myAddChat()">Сохранить пользователей в чате</button>
+            </div>
+          </form>
+          <table id="tableUsers"></table>
       </div>
       <div id="History" class="skryt">
           <input type="text" id="myInputHis" onkeyup="myFilterHis()" placeholder="Поиск">
           <ul id="messagesHistory"></ul>
           <table id="tableMessages"></table>
       </div>
-      <div id="script" class="skryt">3</div>
+      
+      <div id="Contacts" class="skryt">
+        <form action="">
+          <div class="flex">
+            <input type="text" id="myInput" onkeydown="return myFilter(event)" placeholder="Поиск по ФИО (с учетом регистра)" >
+            <!-- <input type="text" class="myInput"   id="addChat" required placeholder="Имя чата">
+            <button id = "btnAdd" class="myInput" style="background-image: url('./img/removable_small.png');" runat="server" onclick="myAddChat()">Сохранить пользователей в чате</button> -->
+          </div>
+        </form>
+        <table id="tableContacts"></table>
       </div>
-          <script src="/lib/app.js"></script>
-          <script src="/lib/appClass.js"></script>
+      </div>
+           <script src="./lib/appClass.js"></script> 
+            <script src="./lib/app.js"></script> 
   </body>
 </html>
