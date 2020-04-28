@@ -10,17 +10,22 @@ let serverDB = require("./lib/serverDB");
 let serverClass = require("./lib/serverClass");
 let  session = require('./sessions/core').magicSession();
 
+
 const mode = 'AD';
 let mySession;
 let _user;
 let usersOnline=[];
 let porthttp = process.env.port || 8125
+console.log('session000',require('./sessions/core').magicSession()) 
 const serverHttp = require("http").createServer(onRequest);
+console.log('session00',require('./sessions/core').magicSession()) 
 const handleGreetRequest = (request, response) => {
   console.log('Start ',request.url);
   //if (/Messager/server.js/)
   //сессия
+
   mySession = request.session;
+ 
   if(mySession)
 {
   //console.log('mySession',mySession);
@@ -222,6 +227,7 @@ if( request.session && request.session.data.user)
   });
 }
 }
+
 function onRequest(req, res)  {
 
   if (req.url.startsWith('/') || req.url.startsWith('/login') ) {
@@ -241,7 +247,7 @@ function onRequest(req, res)  {
 };
 
 ///WebSocket
-
+//console.log('session0',require('./sessions/core').magicSession()) 
 //let cookie_date = new Date().toGMTString(); 
 const server =  new WebSocket.Server({
   server: serverHttp,
@@ -406,7 +412,8 @@ server.on("connection", function(ws, request) {
 
  });
 
-
+ //console.log('session1',require('./sessions/core').magicSession()) 
 serverHttp.listen(porthttp, function() {
+ // console.log('session2',require('./sessions/core').magicSession()) 
   console.log(`Listening on http://${HOST}:${porthttp}`);
 });

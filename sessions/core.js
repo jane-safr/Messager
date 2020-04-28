@@ -1,6 +1,6 @@
 let http = require('http');
 let sessions =  require('./session');
-
+console.log('sessions',sessions)
 exports.session = function( request, response, callback ){
  
  
@@ -8,6 +8,7 @@ exports.session = function( request, response, callback ){
    
     // проверяем текущий запрос и определяем, есть ли для него сеанс
     // сеансы определяются путем поиска request.headers ["Set-Cookie"] по хешу наших сеансов
+//console.log( 'sessionCore', sessions);
    session = sessions.lookupOrCreate(request,{
      lifetime:604800,
      ldap: {
@@ -20,6 +21,7 @@ exports.session = function( request, response, callback ){
     //  ,
     //  sessionID: 'u1mNwZEpCLc'
    });
+   console.log( 'sessionCore', session)
 // реализуем базовую историю для каждого сеанса, помните об этом, так как это может поглотить память при высокой загрузке
 
    if(!session.data.history) { session.data.history = []; }
@@ -39,6 +41,7 @@ exports.session = function( request, response, callback ){
    // ссылаемся на объект сеанса в других местах
   request.session = session;
  
+  console.log(1);
  // запускаем обратный вызов для продолжения цепочки обработки запроса / ответа
   callback( request, response );
   }
@@ -46,7 +49,7 @@ exports.session = function( request, response, callback ){
   exports.magicSession = function(){
 
     http.createServer = function (requestListener) {
-  
+      console.log(2);
       // Create a new instance of a node HttpServer
       var orig = new http.Server(function(request, response){
         request.logIn = function(user){
@@ -67,6 +70,7 @@ exports.session = function( request, response, callback ){
   
         exports.session(request, response, function(request, response){
           requestListener(request, response);
+          console.log(3);
         });
       });
 
@@ -77,6 +81,7 @@ exports.session = function( request, response, callback ){
       server.listen = function (port,cb) { 
         //orig.listen(Number(port));
         orig.listen(process.env.PORT || Number(port));
+        console.log(4);
         cb();
       };
   
